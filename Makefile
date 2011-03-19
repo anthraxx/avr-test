@@ -1,13 +1,44 @@
+CC=avr-gcc
+PR=avrdude
+LD=avr-objcopy
 
-all:
-	toggle-led
+DEVPRG=/dev/ttyUSB0
+DEVCTL=stk500v2
+DEVMMCU=atmega8
 
-test: toggle-led flash
+CFLAGS=-Wall \
+	   -Wextra \
+	   -pedantic \
+	   -Wuninitialized \
+	   -Winit-self \
+	   -mmcu=${DEVMMCU} \
+	   -Os
+PRFLAGS=-p m8
+LDFLAGS=-j .text -O ihex
+LDLIBS=
 
-toggle-led:
-	avr-gcc -mmcu=atmega8 -Wall -Os -o toggle_led.elf toggle_led.c
-	avr-objcopy -j .text -O ihex toggle_led.elf toggle_led.hex
+all: start toggle_led finish
+
+toggle_led: toggle_led.hex
+
+%::src/%.elf
+	echo "test"
+
+start:
+	mkdir -p ./bin 
+
+finish:
+	chmod -x bin/*.elf
+
+%.elf:src/%.c
+	$(CC) $(CFLAGS) -o bin/$@ $<
+
+%.hex:bin/%.elf
+	$(LD) $(LDFLAGS) $^ bin/$@ ${LDLIBS}
+
+clean:
+	${RM} ./bin/*
 
 flash:
-	avrdude -p m8 -c stk500v2 -e -U flash:w:toggle_led.hex -P /dev/ttyUSB0 -v
+	${PR} ${PRFLAGS} -c ${DEVCTL} -e -U flash:w:bin/toggle_led.hex -P ${DEVPRG} -v
 
