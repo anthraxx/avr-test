@@ -97,8 +97,11 @@ uint8_t mkdual ( uint8_t exp )
 int main (void)
 {
     /* Declare needs */
-    uint8_t k0, k1, k2, k3, k4, k5, k6, k7, k8, k9, kst, ksh;
-    
+    uint8_t k0, k1, k2, k3, k4, k5, k6, k7, k8, k9, kst, ksh, isum;
+    /* XXX: store 2 values into single int8 */
+    uint8_t kpadv[KEYPAD_LEN];
+    uint8_t it = 0, it2 = 0, sum = 0;
+
     /* configure digital output */
     DDRD = 0x00;
     DDRC = (BOOL0|BOOL1|BOOL2);
@@ -113,10 +116,6 @@ int main (void)
     pad_blink(50, 2);
     green_blink(50, 2);
     
-    //XXX: store 2 values into single int8
-    uint8_t kpadv[KEYPAD_LEN] = {0,0,0};
-    uint8_t it = 0, it2 = 0, sum = 0;
-
     while ( 1 ) /* atom-rocket program, no need to abort */
     {
         kpadv[0] = 0;
@@ -145,7 +144,7 @@ int main (void)
             /* notify that key was recognized */
             green_blink(50, 1);
 
-            uint8_t isum = k1+(k2*2)+(k3*3)+(k4*4)+(k5*5)+(k6*6)+(k7*7)+(k8*8)+(k9*9);
+            isum = k1+(k2*2)+(k3*3)+(k4*4)+(k5*5)+(k6*6)+(k7*7)+(k8*8)+(k9*9);
 
             kpadv[it] = isum;
             ++it;
@@ -157,8 +156,9 @@ int main (void)
         /* Lets notify that input was recognized */
         green_blink(50, 2);
 
-        while ( --it >= 0 ) {
-            sum += kpadv[it2] * pow(10, it); 
+        while ( it > 0 ) {
+            sum += kpadv[it2] * pow(10, it-1);
+            --it;
         }
         
         /*pad_blink(DELAY, sum );*/
