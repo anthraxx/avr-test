@@ -100,27 +100,27 @@ getkey:
 
     ; Erste Spalte
     enablekeycol 0b00000100
-    checkkey KEYROW1, lkey3
+    checkkey KEYROW1, lkey2
     checkkey KEYROW2, lkey4
     checkkey KEYROW3, lkey7
     checkkey KEYROW4, lkeystar
     
     ; Zweite Spalte
     enablekeycol 0b00000001
-    checkkey KEYROW1, lkey1
+    checkkey KEYROW1, lkey3
     checkkey KEYROW2, lkey5
     checkkey KEYROW3, lkey8
     checkkey KEYROW4, lkey0
     
     ; Dritte Spalte
     enablekeycol 0b00010000
-    checkkey KEYROW1, lkey2
+    checkkey KEYROW1, lkey1
     checkkey KEYROW2, lkey6
     checkkey KEYROW3, lkey9
     checkkey KEYROW4, lkeyhash
 
     ; Keine Taste wurde gedrueckt
-    retkey -1
+    retkey 0
 
 lkey0: retkey 0
 lkey1: retkey 1
