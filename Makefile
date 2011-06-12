@@ -44,8 +44,6 @@ finish:
 clean:
 	${RM} ./bin/*
 
-flash-keypad:
-flash-toggle-led:
-flash-%:
+flash-keypad flash-toggle-led flash-%:
 	${PR} ${PRFLAGS} -c ${DEVCTL} -e -U flash:w:bin/$(subst flash-,,$@).hex -P ${DEVPRG} -v
 
