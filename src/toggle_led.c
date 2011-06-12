@@ -72,7 +72,7 @@ void assign_col ( uint8_t line, uint8_t *v0, uint8_t *v1, uint8_t *v2, uint8_t *
     PORTD = line;
     if ( (PIND & BOOL1) > 0 ) {
         *v0=1;
-        /*green_blink( 50, 1 );*/
+        green_blink( 100, 1 );
     }
     if ( (PIND & BOOL6) > 0 ) {
         *v1=1;
@@ -105,7 +105,7 @@ int main (void)
     /* configure digital output */
     DDRD = 0x00;
     DDRC = (BOOL0|BOOL1|BOOL2);
-    DDRD = (BOOL0|BOOL4|BOOL7);
+    DDRD = (BOOL0|BOOL4|BOOL2); 
 
     /* init state */
     PORTD = 0x00;
@@ -127,22 +127,22 @@ int main (void)
         {
             k0=0; k1=0; k2=0; k3=0; k4=0; k5=0; k6=0; k7=0; k8=0; k9=0; kst=0; ksh=0;
             
-            PORTD = (BOOL3|BOOL4|BOOL7);
+            PORTD = (BOOL0|BOOL4|BOOL2);
             while ( ( PIND & (BOOL1|BOOL3|BOOL5|BOOL6) ) == 0 ) {
                 _delay_ms(10);
             }
 
-            assign_col ( BOOL7, &k1, &k4, &k7, &kst );
+            assign_col ( BOOL2, &k1, &k4, &k7, &kst );
             assign_col ( BOOL0, &k2, &k5, &k8, &k0 );
             assign_col ( BOOL4, &k3, &k6, &k9, &ksh );
 
-            PORTD = (BOOL3|BOOL4|BOOL7);
+            PORTD = (BOOL0|BOOL4|BOOL2);
             while ( ( PIND & (BOOL1|BOOL3|BOOL5|BOOL6) ) > 0 ) {
                 _delay_ms(10);
             }
             
             /* notify that key was recognized */
-            green_blink(50, 1);
+            /*green_blink(50, 1);*/
 
             isum = k1+(k2*2)+(k3*3)+(k4*4)+(k5*5)+(k6*6)+(k7*7)+(k8*8)+(k9*9);
 
@@ -154,7 +154,7 @@ int main (void)
         }
 
         /* Lets notify that input was recognized */
-        green_blink(50, 2);
+        /* green_blink(50, 2); */
 
         while ( it > 0 ) {
             sum += kpadv[it2] * pow(10, it-1);
