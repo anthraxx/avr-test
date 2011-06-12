@@ -1,3 +1,4 @@
+ASM=avra
 CC=avr-gcc
 PR=avrdude
 LD=avr-objcopy
@@ -16,19 +17,23 @@ CFLAGS=-Wall \
 PRFLAGS=-p m8
 LDFLAGS=-j .text -O ihex
 LDLIBS=
+ASMINC=/usr/include/avr
 
-all: start toggle_led finish
+all: start toggle_led keypad finish
 
-toggle_led: toggle_led.hex
+toggle_led: toggle_led.elf toggle_led.hex
 
-%::src/%.elf
-	echo "test"
+keypad: keypad.hex
 
 start:
 	mkdir -p ./bin 
 
 finish:
 	chmod -x bin/*.elf
+
+%.hex:src/%.asm
+	$(ASM) -I $(ASMINC) -o bin/$@ $<
+	mv src/*.hex src/*.obj src/*.cof bin/
 
 %.elf:src/%.c
 	$(CC) $(CFLAGS) -o bin/$@ $<
@@ -39,6 +44,8 @@ finish:
 clean:
 	${RM} ./bin/*
 
-flash:
-	${PR} ${PRFLAGS} -c ${DEVCTL} -e -U flash:w:bin/toggle_led.hex -P ${DEVPRG} -v
+flash-keypad:
+flash-toggle-led:
+flash-%:
+	${PR} ${PRFLAGS} -c ${DEVCTL} -e -U flash:w:bin/$(subst flash-,,$@).hex -P ${DEVPRG} -v
 
